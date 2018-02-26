@@ -293,6 +293,7 @@ end
 
 function selectSpellWithUUID(uuid)
 
+	resetSpellHotbar()
 	finding = true
 	findStartIndex = 0
 	while finding == true do
@@ -333,6 +334,181 @@ function selectSpellWithUUID(uuid)
 	end
 end
 
+function fillSpellListInfo()
+
+	spellListInfo = {}
+	filteredSpellListInfo = {}
+
+	finding = true
+	findStartIndex = 0
+	while finding == true do
+
+		for i = findStartIndex, 11, 1 do
+
+			if buttonArray:GetButtonEnabled(i) then
+
+				tooltipValue = actionBarTooltip[i]
+
+				if isTooltipSpell(tooltipValue) then
+
+					spellUUID = getSpellUUID(tooltipValue)
+					spellName = spellInfo[spellUUID].name
+					spellIcon = spellInfo[spellUUID].spellIcon
+
+					toInsert = {}
+					toInsert.spellUUID = spellUUID
+					toInsert.spellName = spellName
+					toInsert.spellIcon = string.sub(spellIcon, 1, #spellIcon - 1)..'B'
+
+					table.insert(spellListInfo, toInsert)
+				end
+			else
+				finding = false
+				break
+			end
+		end
+
+		if finding then
+
+			newSpellIndex = findNewSpellIndex()
+
+			if newSpellIndex ~= nil then
+				findStartIndex = newSpellIndex
+			else
+				finding = false
+			end
+		end
+	end
+	filteredSpellListInfo = spellListInfo
+	resetSpellHotbar()
+end
+
+function getSlotEnabled(slot)
+	return hotbarButtonsDisabled and buttonArray:GetButtonEnabled(slot)
+end
+
+function slotEndsAreArrows()
+	return #filteredSpellListInfo > 12
+end
+
+function getSlotOffset(slot)
+	return filteredSpellListInfoOffset + slot
+end
+
+function getBamForSlot(slot)
+	if slot == 0 or slot == 11 then
+		if slotEndsAreArrows() then
+			return 'GUIBTACT'
+		else
+			return 'GUIBTBUT'
+		end
+	else
+		return 'GUIBTBUT'
+	end
+end
+
+function getFrameForSlot(slot)
+	if slot == 0 and slotEndsAreArrows() then
+		return 64
+	elseif slot == 11 and slotEndsAreArrows() then
+		return 66
+	else
+		slotOffset = getSlotOffset(slot)
+		if not slotEndsAreArrows() then
+			if slotOffset == 0 then
+				return 3
+			else
+				return 0
+			end
+		elseif slotOffset == 1 then
+			return 3
+		else
+			return 0
+		end
+	end
+end
+
+function getIconEnabledForSlot(slot)
+	if (slot == 0 or slot == 11) and slotEndsAreArrows() then
+		return false
+	else
+		return true
+	end
+end
+
+function getIconForSlot(slot)
+
+	info = nil
+
+	if slotEndsAreArrows() then
+		info = filteredSpellListInfo[filteredSpellListInfoOffset + slot]
+	else
+		info = filteredSpellListInfo[filteredSpellListInfoOffset + slot + 1]
+	end
+
+	if info ~= nil then
+		return info.spellIcon
+	else
+		return nil
+	end
+end
+
+function getTooltipForSlot(slot)
+
+	info = nil
+
+	if slotEndsAreArrows() then
+		if slot == 0 or slot == 11 then
+			return nil
+		else
+			info = filteredSpellListInfo[filteredSpellListInfoOffset + slot]
+		end
+	else
+		info = filteredSpellListInfo[filteredSpellListInfoOffset + slot + 1]
+	end
+
+	if info ~= nil then
+		return info.spellName
+	else
+		return nil
+	end
+end
+
+function decrementSpellListInfoOffset()
+	newOffset = filteredSpellListInfoOffset - 10
+	if newOffset < 0 then newOffset = 0 end
+	filteredSpellListInfoOffset = newOffset
+end
+
+function incrementSpellListInfoOffset()
+	maxOffset = #filteredSpellListInfo - 10
+	newOffset = filteredSpellListInfoOffset + 10
+	if newOffset > maxOffset then newOffset = maxOffset end
+	filteredSpellListInfoOffset = newOffset
+end
+
+function doActionForSlot(slot)
+	if (slot == 0 or slot == 11) and slotEndsAreArrows() then
+		if slot == 0 then
+			decrementSpellListInfoOffset()
+		elseif slot == 11 then
+			incrementSpellListInfoOffset()
+		end
+	else
+		spellPressed = nil
+
+		if slotEndsAreArrows() then
+			spellPressed = filteredSpellListInfo[filteredSpellListInfoOffset + slot]
+		else
+			spellPressed = filteredSpellListInfo[filteredSpellListInfoOffset + slot + 1]
+		end
+
+		if spellPressed ~= nil then
+			selectSpellWithUUID(spellPressed.spellUUID)
+		end
+	end
+end
+
 function customSpellMenuWatchdog()
 
 	if not buttonArray:GetButtonEnabled(0)
@@ -362,178 +538,19 @@ function customSpellMenuWatchdog()
 						table.insert(filteredSpellListInfo, spellInfos)
 					end
 				end
+				hotbarButtonsDisabled = true
 			else
-
-				filteredSpellListInfo = spellListInfo
+				hotbarButtonsDisabled = false
 			end
-
-			-- This needs to match the amount of entries that causes the scroll bar to appear.
-			if startingWithSize >= 10 then
-				Infinity_SetScrollTop('bubbSpellMenuList')
-			end
-
+			filteredSpellListInfoOffset = 0
 			oldSpellSearchEdit = spellSearchEdit
 		end
 	end
 end
 
-function fillSpellListInfo()
-
-	spellListInfo = {}
-	filteredSpellListInfo = {}
-
-	finding = true
-	findStartIndex = 0
-	while finding == true do
-
-		for i = findStartIndex, 11, 1 do
-
-			if buttonArray:GetButtonEnabled(i) then
-
-				tooltipValue = actionBarTooltip[i]
-
-				if isTooltipSpell(tooltipValue) then
-
-					spellUUID = getSpellUUID(tooltipValue)
-					spellName = spellInfo[spellUUID].name
-					spellIcon = spellInfo[spellUUID].spellIcon
-					spellPrimaryType = spellInfo[spellUUID].primaryType
-
-					if spellPrimaryType == 0 then
-						spellPrimaryType = 'None'
-					elseif spellPrimaryType == 1 then
-						spellPrimaryType = 'Abjurer'
-					elseif spellPrimaryType == 2 then
-						spellPrimaryType = 'Conjurer'
-					elseif spellPrimaryType == 3 then
-						spellPrimaryType = 'Diviner'
-					elseif spellPrimaryType == 4 then
-						spellPrimaryType = 'Enchanter'
-					elseif spellPrimaryType == 5 then
-						spellPrimaryType = 'Illusionist'
-					elseif spellPrimaryType == 6 then
-						spellPrimaryType = 'Invoker'
-					elseif spellPrimaryType == 7 then
-						spellPrimaryType = 'Necromancer'
-					elseif spellPrimaryType == 8 then
-						spellPrimaryType = 'Transmuter'
-					elseif spellPrimaryType == 9 then
-						spellPrimaryType = 'Generalist'
-					end
-
-					spellLevel = spellInfo[spellUUID].spellLevel
-
-					spellType = spellInfo[spellUUID].spellType
-					spellTypeStringTable = 
-					{
-						[0] = 'Special', [1] = 'Wizard', [2] = 'Cleric',
-						[3] = 'Psionic', [4] = 'Innate', [5] = 'Bardsong'
-					}
-					spellType = spellTypeStringTable[spellType]
-
-					toInsert = {}
-					toInsert.spellUUID = spellUUID
-					toInsert.spellName = spellName
-					toInsert.spellIcon = spellIcon
-					toInsert.spellPrimaryType = spellPrimaryType
-					toInsert.spellLevel = spellLevel
-					toInsert.spellType = spellType
-
-					table.insert(spellListInfo, toInsert)
-				end
-			else
-				finding = false
-				break
-			end
-		end
-
-		if finding then
-
-			newSpellIndex = findNewSpellIndex()
-
-			if newSpellIndex ~= nil then
-				findStartIndex = newSpellIndex
-			else
-				finding = false
-			end
-		end
-	end
-	filteredSpellListInfo = spellListInfo
-	resetSpellHotbar()
-end
-
-function nameSortSpellListInfo(firstInfo, secondInfo)
-	return firstInfo.spellName < secondInfo.spellName
-end
-
-function typeSortSpellListInfo(firstInfo, secondInfo)
-
-	firstType = firstInfo.spellType
-	secondType = secondInfo.spellType
-
-	if firstType ~= secondType then
-
-		return firstType < secondType
-	else
-
-		firstLevel = firstInfo.spellLevel
-		secondLevel = secondInfo.spellLevel
-
-		if firstLevel ~= secondLevel then
-
-			return firstLevel < secondLevel
-		else
-
-			firstName = firstInfo.spellName
-			secondName = secondInfo.spellName
-
-			if firstName ~= secondName then
-				return firstName < secondName
-			end
-		end
-	end
-end
-
-function primaryTypeSortSpellListInfo(firstInfo, secondInfo)
-
-	firstType = firstInfo.spellPrimaryType
-	secondType = secondInfo.spellPrimaryType
-
-	if firstType ~= secondType then
-
-		return firstType < secondType
-	else
-
-		firstLevel = firstInfo.spellLevel
-		secondLevel = secondInfo.spellLevel
-
-		if firstLevel ~= secondLevel then
-
-			return firstLevel < secondLevel
-		else
-
-			firstName = firstInfo.spellName
-			secondName = secondInfo.spellName
-
-			if firstName ~= secondName then
-				return firstName < secondName
-			end
-		end
-	end
-end
-
-function levelSortSpellListInfo(firstInfo, secondInfo)
-
-	if firstInfo.spellLevel ~= secondInfo.spellLevel then
-
-		return firstInfo.spellLevel < secondInfo.spellLevel
-	else
-		return nameSortSpellListInfo(firstInfo, secondInfo)
-	end
-end
-
 spellListInfo = {}
 filteredSpellListInfo = {}
+filteredSpellListInfoOffset = 0
 hotbarButtonsDisabled = false
 
 oldSpellSearchEdit = ''
@@ -550,40 +567,26 @@ menu
 	onOpen 	"
 				if not bubbSpellMenuAlreadyAdjusted then
 
-					local x, y, bubbSpellMenuBackgroundWidth, h = Infinity_GetArea('bubbSpellMenuBackground')
+					local x, y, bubbSpellMenuBackgroundWidth, h = Infinity_GetArea('bubbSpellMenuSearchBackground')
 					bubbSpellMenuXPos = Infinity_GetScreenSize() / 2 - bubbSpellMenuBackgroundWidth / 2
 
 					adjustItemGroup(
 					{
-						'bubbSpellMenuBackground',
-						'bubbSpellMenuClose',
 						'bubbSpellMenuSearchBackground',
 						'bubbSpellMenuSearch',
-						'bubbSpellMenuNameSort',
-						'bubbSpellMenuTypeSort',
-						'bubbSpellMenuPrimaryTypeSort',
-						'bubbSpellMenuLevelSort',
-						'bubbSpellMenuList',
 
 					}, bubbSpellMenuXPos, 0, 0, 0)
 
 					bubbSpellMenuAlreadyAdjusted = true
 				end
 
-				clickedRow = 0
 				oldSpellSearchEdit = ''
 				spellSearchEdit = ''
+				filteredSpellListInfoOffset = 0
 				fillSpellListInfo()
-				
-				Infinity_FocusTextEdit('bubbSpellMenuSearch'); 
+				Infinity_FocusTextEdit('bubbSpellMenuSearch');
 			"
 	onclose "
-				if (buttonArray:GetButtonEnabled(0) and 
-	  					actionBarTooltip[0] ~= 'F1 : '..Infinity_FetchString(4933)) -- talkString
-	  			then
-					Infinity_PressKeyboardButton('escape')
-				end
-
 				hotbarButtonsDisabled = false
 			"	
 	label
@@ -593,32 +596,10 @@ menu
 	}
 	label
 	{
-		-- Original Name: CUSTOM_SPELL_BACKGROUND
-		name 'bubbSpellMenuBackground'
-		-- x-offset of 0
-		area 0 85 660 495
-		rectangle 5
-		rectangle opacity 150
-	}
-	button
-	{
-		-- Original Name: CUSTOM_SPELL_EXIT
-		name 'bubbSpellMenuClose'
-		-- x-offset of 465
-		area 605 95 44 44
-		bam GUIOSW
-		sequence 2
-		action 
-		"
-			Infinity_PopMenu('BUBB_SPELL_MENU')
-		"
-	}
-	label
-	{
 		-- Original Name: SEARCH_LABEL
 		name "bubbSpellMenuSearchBackground"
 		-- x-offset of 125
-		area 125 105 410 24
+		area 0 0 410 24
 		rectangle 1
 		opacity 1000
 	}
@@ -627,7 +608,7 @@ menu
 		-- Original Name: SPELL_SEARCH_AREA
 		name "bubbSpellMenuSearch"
 		-- x-offset of 125
-		area 125 107 410 24
+		area 0 2 410 24
 		var spellSearchEdit
 		text style "edit"
 		align center bottom
@@ -639,140 +620,12 @@ menu
 				Infinity_PopMenu('BUBB_SPELL_MENU')
 
 			elseif key_pressed == 13 then
+
+				spellPressed = filteredSpellListInfo[1]
+				selectSpellWithUUID(spellPressed.spellUUID)
 				return 0
 			else
 				return 1
-			end
-		"
-	}
-	button
-	{
-		-- Original Name: NAME_SORT_BUTTON
-		name 'bubbSpellMenuNameSort'
-		-- x-offset of 50
-		area 50 138 140 42
-		bam GUIOSTSM
-		text "Name"
-		text style "button"
-		text align center center
-		action "table.sort(filteredSpellListInfo, nameSortSpellListInfo)"
-	}
-	button
-	{
-		-- Original Name: PRIMARY_SORT_BUTTON
-		name 'bubbSpellMenuTypeSort'
-		-- x-offset of 190
-		area 190 138 140 42
-		bam GUIOSTSM
-		text "Type"
-		text style "button"
-		text align center center
-		action "table.sort(filteredSpellListInfo, typeSortSpellListInfo)"
-	}
-	button
-	{
-		-- Original Name: LEVEL_SORT_BUTTON
-		name 'bubbSpellMenuPrimaryTypeSort'
-		-- x-offset of 330
-		area 330 138 140 42
-		bam GUIOSTSM
-		text "Primary Type"
-		text style "button"
-		text align center center
-		action "table.sort(filteredSpellListInfo, primaryTypeSortSpellListInfo)"
-	}
-	button
-	{
-		-- Original Name: LEVEL_SORT_BUTTON
-		name 'bubbSpellMenuLevelSort'
-		-- x-offset of 330
-		area 470 138 140 42
-		bam GUIOSTSM
-		text "Level"
-		text style "button"
-		text align center center
-		action "table.sort(filteredSpellListInfo, levelSortSpellListInfo)"
-	}
-	list
-	{
-		column 
-		{ 
-			width 10
-			label
-			{
-				area 0 0 -1 -1
-				--bam lua "filteredSpellListInfo[rowNumber].spellIcon"
-				icon lua "filteredSpellListInfo[rowNumber].spellIcon"
-				--count 1
-				align center center
-				pad 10 10 0 0
-			}
-		}
-		column 
-		{ 
-			width 16
-			label
-			{
-				area 0 0 -1 -1
-				text lua "filteredSpellListInfo[rowNumber].spellName"
-				text style "normal_parchment"
-				text align center center
-				pad 10 10 0 0
-			}
-		}
-		column 
-		{ 
-			width 30
-			label
-			{
-				area 0 0 -1 -1
-				text lua "filteredSpellListInfo[rowNumber].spellType"
-				text style "normal_parchment"
-				text align center center
-				pad 10 10 0 0
-			}
-		}
-		column 
-		{ 
-			width 15
-			label
-			{
-				area 0 0 -1 -1
-				text lua "filteredSpellListInfo[rowNumber].spellPrimaryType"
-				text style "normal_parchment"
-				text align center center
-				pad 10 10 0 0
-			}
-		}
-		column 
-		{ 
-			width 30
-			label
-			{
-				area 0 0 -1 -1
-				text lua "filteredSpellListInfo[rowNumber].spellLevel"
-				text style "normal_parchment"
-				text align center center
-				pad 10 10 0 0
-			}
-		}
-
-		-- Original Name: CUSTOM_SPELL_SELECTION_LIST
-		name "bubbSpellMenuList"
-		-- x-offset of 10
-		area 5 190 630 375
-		rowheight 40
-		table "filteredSpellListInfo"
-		var clickedRow
-		scrollbar 'GUISCRC'
-		action		
-		"
-			clickedInfo = filteredSpellListInfo[clickedRow]
-
-			if clickedInfo ~= nil then
-
-				clickedUUID = clickedInfo.spellUUID
-				selectSpellWithUUID(clickedUUID)
 			end
 		"
 	}
@@ -11202,9 +11055,23 @@ menu
 		action
 		"
 			if(groundItemsButtonToggle == 1) then
+
+				-- BUBB EDIT SPELL START
+
+				Infinity_SetOffset('BUBB_SPELL_MENU', 0, -toolbarTop + 680)
+	
+				-- BUBB EDIT SPELL END
+
 				worldScreen:StartGroundItems()
 			else
 				worldScreen:StopGroundItems()
+
+				-- BUBB EDIT SPELL START
+
+				Infinity_SetOffset('BUBB_SPELL_MENU', 0, -toolbarTop + 740)
+	
+				-- BUBB EDIT SPELL END
+
 			end
 		"
 	}
@@ -11337,9 +11204,11 @@ menu
 						worldScreen:TogglePauseGame(true)
 					end
 
-					hotbarButtonsDisabled = true
 					buttonArray:OnLButtonPressed(6)
-					Infinity_PushMenu('BUBB_SPELL_MENU');
+
+					if not Infinity_IsMenuOnStack('BUBB_SPELL_MENU') then
+						Infinity_PushMenu('BUBB_SPELL_MENU')
+					end
 				"
 
 		-- BUBB EDIT SPELL END
@@ -11432,11 +11301,293 @@ menu
 		--tooltip lua "actionBarTooltip[11]"
 		tooltip lua "resolveTooltip(11)"
 
-		-- BUBB EDIT SPELL END
+		--action "buttonArray:OnLButtonPressed(11)"
+		action "
+					if not worldScreen:CheckIfPaused() then
 
-		action "buttonArray:OnLButtonPressed(11)"
+						worldScreen:TogglePauseGame(true)
+					end
+
+					buttonArray:OnLButtonPressed(11)
+
+					if not Infinity_IsMenuOnStack('BUBB_SPELL_MENU') then
+						Infinity_PushMenu('BUBB_SPELL_MENU')
+					end
+				"
+		
+		-- BUBB EDIT SPELL END
+				
 		actionAlt "buttonArray:OnRButtonPressed(11)"
 	}
+
+	-- BUBB EDIT SPELL START
+
+	button
+	{
+		area 68 1 52 52 
+		enabled "getSlotEnabled(0) and not getIconEnabledForSlot(0)"
+		align center center
+		bam lua 'getBamForSlot(0)'
+		frame lua 'getFrameForSlot(0)'
+		tooltip lua 'getTooltipForSlot(0)'
+		action 'doActionForSlot(0)'
+	}
+	button
+	{
+		area 68 1 52 52 
+		enabled "getSlotEnabled(0) and getIconEnabledForSlot(0)"
+		align center center
+		bam lua 'getBamForSlot(0)'
+		frame lua 'getFrameForSlot(0)'
+		icon lua "getIconForSlot(0)"
+		tooltip lua 'getTooltipForSlot(0)'
+		action 'doActionForSlot(0)'
+	}
+
+	button
+	{
+		area 122 1 52 52 
+		enabled "getSlotEnabled(1) and not getIconEnabledForSlot(1)"
+		align center center
+		bam lua 'getBamForSlot(1)'
+		frame lua 'getFrameForSlot(1)'
+		tooltip lua 'getTooltipForSlot(1)'
+		action 'doActionForSlot(1)'
+	}
+	button
+	{
+		area 122 1 52 52 
+		enabled "getSlotEnabled(1) and getIconEnabledForSlot(1)"
+		align center center
+		bam lua 'getBamForSlot(1)'
+		frame lua 'getFrameForSlot(1)'
+		icon lua "getIconForSlot(1)"
+		tooltip lua 'getTooltipForSlot(1)'
+		action 'doActionForSlot(1)'
+	}
+
+	button
+	{
+		area 177 1 52 52 
+		enabled "getSlotEnabled(2) and not getIconEnabledForSlot(2)"
+		align center center
+		bam lua 'getBamForSlot(2)'
+		frame lua 'getFrameForSlot(2)'
+		tooltip lua 'getTooltipForSlot(2)'
+		action 'doActionForSlot(2)'
+	}
+	button
+	{
+		area 177 1 52 52 
+		enabled "getSlotEnabled(2) and getIconEnabledForSlot(2)"
+		align center center
+		bam lua 'getBamForSlot(2)'
+		frame lua 'getFrameForSlot(2)'
+		icon lua "getIconForSlot(2)"
+		tooltip lua 'getTooltipForSlot(2)'
+		action 'doActionForSlot(2)'
+	}
+
+	button
+	{
+		area 231 1 52 52 
+		enabled "getSlotEnabled(3) and not getIconEnabledForSlot(3)"
+		align center center
+		bam lua 'getBamForSlot(3)'
+		frame lua 'getFrameForSlot(3)'
+		tooltip lua 'getTooltipForSlot(3)'
+		action 'doActionForSlot(3)'
+	}
+	button
+	{
+		area 231 1 52 52 
+		enabled "getSlotEnabled(3) and getIconEnabledForSlot(3)"
+		align center center
+		bam lua 'getBamForSlot(3)'
+		frame lua 'getFrameForSlot(3)'
+		icon lua "getIconForSlot(3)"
+		tooltip lua 'getTooltipForSlot(3)'
+		action 'doActionForSlot(3)'
+	}
+
+	button
+	{
+		area 299 1 52 52 
+		enabled "getSlotEnabled(4) and not getIconEnabledForSlot(4)"
+		align center center
+		bam lua 'getBamForSlot(4)'
+		frame lua 'getFrameForSlot(4)'
+		tooltip lua 'getTooltipForSlot(4)'
+		action 'doActionForSlot(4)'
+	}
+	button
+	{
+		area 299 1 52 52 
+		enabled "getSlotEnabled(4) and getIconEnabledForSlot(4)"
+		align center center
+		bam lua 'getBamForSlot(4)'
+		frame lua 'getFrameForSlot(4)'
+		icon lua "getIconForSlot(4)"
+		tooltip lua 'getTooltipForSlot(4)'
+		action 'doActionForSlot(4)'
+	}
+
+	button
+	{
+		area 353 1 52 52 
+		enabled "getSlotEnabled(5) and not getIconEnabledForSlot(5)"
+		align center center
+		bam lua 'getBamForSlot(5)'
+		frame lua 'getFrameForSlot(5)'
+		tooltip lua 'getTooltipForSlot(5)'
+		action 'doActionForSlot(5)'
+	}
+	button
+	{
+		area 353 1 52 52 
+		enabled "getSlotEnabled(5) and getIconEnabledForSlot(5)"
+		align center center
+		bam lua 'getBamForSlot(5)'
+		frame lua 'getFrameForSlot(5)'
+		icon lua "getIconForSlot(5)"
+		tooltip lua 'getTooltipForSlot(5)'
+		action 'doActionForSlot(5)'
+	}
+
+	button
+	{
+		area 407 1 52 52 
+		enabled "getSlotEnabled(6) and not getIconEnabledForSlot(6)"
+		align center center
+		bam lua 'getBamForSlot(6)'
+		frame lua 'getFrameForSlot(6)'
+		tooltip lua 'getTooltipForSlot(6)'
+		action 'doActionForSlot(6)'
+	}
+	button
+	{
+		area 407 1 52 52 
+		enabled "getSlotEnabled(6) and getIconEnabledForSlot(6)"
+		align center center
+		bam lua 'getBamForSlot(6)'
+		frame lua 'getFrameForSlot(6)'
+		icon lua "getIconForSlot(6)"
+		tooltip lua 'getTooltipForSlot(6)'
+		action 'doActionForSlot(6)'
+	}
+
+	button
+	{
+		area 461 1 52 52 
+		enabled "getSlotEnabled(7) and not getIconEnabledForSlot(7)"
+		align center center
+		bam lua 'getBamForSlot(7)'
+		frame lua 'getFrameForSlot(7)'
+		tooltip lua 'getTooltipForSlot(7)'
+		action 'doActionForSlot(7)'
+	}
+	button
+	{
+		area 461 1 52 52 
+		enabled "getSlotEnabled(7) and getIconEnabledForSlot(7)"
+		align center center
+		bam lua 'getBamForSlot(7)'
+		frame lua 'getFrameForSlot(7)'
+		icon lua "getIconForSlot(7)"
+		tooltip lua 'getTooltipForSlot(7)'
+		action 'doActionForSlot(7)'
+	}
+
+	button
+	{
+		area 528 1 52 52 
+		enabled "getSlotEnabled(8) and not getIconEnabledForSlot(8)"
+		align center center
+		bam lua 'getBamForSlot(8)'
+		frame lua 'getFrameForSlot(8)'
+		tooltip lua 'getTooltipForSlot(8)'
+		action 'doActionForSlot(8)'
+	}
+	button
+	{
+		area 528 1 52 52 
+		enabled "getSlotEnabled(8) and getIconEnabledForSlot(8)"
+		align center center
+		bam lua 'getBamForSlot(8)'
+		frame lua 'getFrameForSlot(8)'
+		icon lua "getIconForSlot(8)"
+		tooltip lua 'getTooltipForSlot(8)'
+		action 'doActionForSlot(8)'
+	}
+
+	button
+	{
+		area 582 1 52 52 
+		enabled "getSlotEnabled(9) and not getIconEnabledForSlot(9)"
+		align center center
+		bam lua 'getBamForSlot(9)'
+		frame lua 'getFrameForSlot(9)'
+		tooltip lua 'getTooltipForSlot(9)'
+		action 'doActionForSlot(9)'
+	}
+	button
+	{
+		area 582 1 52 52 
+		enabled "getSlotEnabled(9) and getIconEnabledForSlot(9)"
+		align center center
+		bam lua 'getBamForSlot(9)'
+		frame lua 'getFrameForSlot(9)'
+		icon lua "getIconForSlot(9)"
+		tooltip lua 'getTooltipForSlot(9)'
+		action 'doActionForSlot(9)'
+	}
+
+	button
+	{
+		area 636 1 52 52 
+		enabled "getSlotEnabled(10) and not getIconEnabledForSlot(10)"
+		align center center
+		bam lua 'getBamForSlot(10)'
+		frame lua 'getFrameForSlot(10)'
+		tooltip lua 'getTooltipForSlot(10)'
+		action 'doActionForSlot(10)'
+	}
+	button
+	{
+		area 636 1 52 52 
+		enabled "getSlotEnabled(10) and getIconEnabledForSlot(10)"
+		align center center
+		bam lua 'getBamForSlot(10)'
+		frame lua 'getFrameForSlot(10)'
+		icon lua "getIconForSlot(10)"
+		tooltip lua 'getTooltipForSlot(10)'
+		action 'doActionForSlot(10)'
+	}
+
+	button
+	{
+		area 689 1 52 52 
+		enabled "getSlotEnabled(11) and not getIconEnabledForSlot(11)"
+		align center center
+		bam lua 'getBamForSlot(11)'
+		frame lua 'getFrameForSlot(11)'
+		tooltip lua 'getTooltipForSlot(11)'
+		action 'doActionForSlot(11)'
+	}
+	button
+	{
+		area 689 1 52 52 
+		enabled "getSlotEnabled(11) and getIconEnabledForSlot(11)"
+		align center center
+		bam lua 'getBamForSlot(11)'
+		frame lua 'getFrameForSlot(11)'
+		icon lua "getIconForSlot(11)"
+		tooltip lua 'getTooltipForSlot(11)'
+		action 'doActionForSlot(11)'
+	}
+
+	-- BUBB EDIT SPELL END
+	
 }
 `
 	loot = 
@@ -12615,6 +12766,16 @@ end
 		toolbarTop = toolbarTop - newY
 		Infinity_SetOffset('WORLD_QUICKLOOT',0, -toolbarTop)
 		
+		-- BUBB EDIT SPELL START
+
+		if Infinity_IsMenuOnStack('WORLD_QUICKLOOT') then
+			Infinity_SetOffset('BUBB_SPELL_MENU', 0, -toolbarTop + 680)
+		else
+			Infinity_SetOffset('BUBB_SPELL_MENU', 0, -toolbarTop + 740)
+		end
+
+		-- BUBB EDIT SPELL END
+
 		chatboxScrollToBottom = 1
 		worldMessageBoxTop = y + newY
  end

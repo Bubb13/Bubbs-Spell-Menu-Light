@@ -1,9 +1,9 @@
-BACKUP ~bubb_spell_menu/backup~
+BACKUP ~bubb_spell_menu_light/backup~
 AUTHOR ~Bubb~
 VERSION 1.2
-AUTO_TRA ~bubb_spell_menu/%s~
+AUTO_TRA ~bubb_spell_menu_light/%s~
 
-BEGIN ~Bubb's Spell Menu~
+BEGIN ~Bubb's Spell Menu Light~
 
 	/**
 	 * Patch function. Converts any decimal number into a hexadecimal number.
@@ -160,6 +160,7 @@ BEGIN ~Bubb's Spell Menu~
 		END
 	END
 	
+	
 	OUTER_SET spell_count = 0
 	APPEND ~BGEE.LUA~ ~spellInfo =~
 	APPEND ~BGEE.LUA~ ~{~
@@ -202,9 +203,6 @@ BEGIN ~Bubb's Spell Menu~
 				
 				//PATCH_PRINT ~	Spell Altered Name: %unidentified_name_altered%~
 				
-				READ_SHORT 0x001c spell_type
-				READ_BYTE 0x0025 primary_type
-				READ_LONG 0x0034 spell_level
 				READ_ASCII 0x003a spell_icon
 				
 				INNER_ACTION BEGIN
@@ -223,9 +221,6 @@ BEGIN ~Bubb's Spell Menu~
 					APPEND ~BGEE.LUA~ ~%TAB%{~
 					
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['name'] = '%unidentified_name_escaped%',~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellType'] = %spell_type%,~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['primaryType'] = %primary_type%,~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellLevel'] = %spell_level%,~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
 					
 					APPEND ~BGEE.LUA~ ~%TAB%},~
@@ -244,9 +239,6 @@ BEGIN ~Bubb's Spell Menu~
 				SET inserted_strref = RESOLVE_STR_REF (~%unidentified_name_altered%~)
 				WRITE_LONG 0x0008 inserted_strref
 				
-				READ_SHORT 0x001c spell_type
-				READ_BYTE 0x0025 primary_type
-				READ_LONG 0x0034 spell_level
 				READ_ASCII 0x003a spell_icon
 				
 				INNER_ACTION BEGIN
@@ -265,9 +257,6 @@ BEGIN ~Bubb's Spell Menu~
 					APPEND ~BGEE.LUA~ ~%TAB%{~
 					
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['name'] = '%original_value_escaped%',~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellType'] = %spell_type%,~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['primaryType'] = %primary_type%,~
-					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellLevel'] = %spell_level%,~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
 	
 					APPEND ~BGEE.LUA~ ~%TAB%},~
