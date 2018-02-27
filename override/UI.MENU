@@ -210,6 +210,10 @@ function getTooltipContents(string)
 	return string.sub(string, firstIndex + 2, #string)
 end
 
+function isFirstTooltipTalk()
+	return getTooltipContents(actionBarTooltip[0]) == Infinity_FetchString(4933) --Talk tooltip
+end
+
 function resolveTooltip(index)
 	tooltip = actionBarTooltip[index]
 	tooltip = replaceSpellUUIDs(tooltip)
@@ -229,6 +233,13 @@ end
 
 function isTooltipSpell(tooltip)
 	return not isTooltipSpecial(tooltip)
+end
+
+function isTooltipQuickSpell(tooltip)
+	return 
+			isFirstTooltipTalk()
+			and (getTooltipContents(tooltip) == Infinity_FetchString(4938) --Quick cast tooltip
+		   	or isTooltipSpell(tooltip))
 end
 
 function resetSpellHotbar()
@@ -552,10 +563,31 @@ spellListInfo = {}
 filteredSpellListInfo = {}
 filteredSpellListInfoOffset = 0
 hotbarButtonsDisabled = false
+pausedOnOpen = false
 
 oldSpellSearchEdit = ''
 spellSearchEdit = ''
 bubbSpellMenuAlreadyAdjusted = false
+
+function launchSpellMenu(slot, leftClick)
+
+	if leftClick then
+		buttonArray:OnLButtonPressed(slot)
+	else
+		buttonArray:OnRButtonPressed(slot)
+	end
+
+	if not isFirstTooltipTalk() then
+
+		if not worldScreen:CheckIfPaused() then
+			pausedOnOpen = false
+			worldScreen:TogglePauseGame(true)
+		else
+			pausedOnOpen = true
+		end
+		Infinity_PushMenu('BUBB_SPELL_MENU')
+	end
+end
 
 `
 menu
@@ -587,7 +619,15 @@ menu
 				Infinity_FocusTextEdit('bubbSpellMenuSearch');
 			"
 	onclose "
+				if not isFirstTooltipTalk() then
+					Infinity_PressKeyboardButton('escape')
+				end
+
 				hotbarButtonsDisabled = false
+
+				if not pausedOnOpen then
+					worldScreen:TogglePauseGame(true)
+				end
 			"	
 	label
 	{
@@ -10653,7 +10693,14 @@ menu
 			label
 			{
 				area 80 0 150 60
-				text lua "Infinity_FetchString(store.healingSpells[rowNumber].name)"
+				
+				-- BUBB EDIT SPELL START
+				
+				--text lua "Infinity_FetchString(store.healingSpells[rowNumber].name)"
+				text lua "replaceSpellUUIDs(Infinity_FetchString(store.healingSpells[rowNumber].name))"
+				
+				-- BUBB EDIT SPELL END
+				
 				text style "normal"
 				text align left center
 			}
@@ -11142,10 +11189,21 @@ menu
 		--tooltip lua "actionBarTooltip[3]"
 		tooltip lua "resolveTooltip(3)"
 
+		action "buttonArray:OnLButtonPressed(3)"
+
+		--actionAlt "buttonArray:OnRButtonPressed(3)"
+		actionAlt 	"
+						if isTooltipQuickSpell(actionBarTooltip[3])
+						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU')
+						then
+							launchSpellMenu(3, false)
+						else
+							buttonArray:OnRButtonPressed(3)
+						end
+					"
+
 		-- BUBB EDIT SPELL END
 
-		action "buttonArray:OnLButtonPressed(3)"
-		actionAlt "buttonArray:OnRButtonPressed(3)"
 	}
 	button
 	{
@@ -11164,7 +11222,20 @@ menu
 		-- BUBB EDIT SPELL END
 
 		action "buttonArray:OnLButtonPressed(4)"
-		actionAlt "buttonArray:OnRButtonPressed(4)"
+
+		--actionAlt "buttonArray:OnRButtonPressed(4)"
+		actionAlt 	"
+						if isTooltipQuickSpell(actionBarTooltip[4])
+						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU')
+						then
+							launchSpellMenu(4, false)
+						else
+							buttonArray:OnRButtonPressed(4)
+						end
+					"
+
+		-- BUBB EDIT SPELL END
+
 	}
 	button
 	{
@@ -11182,7 +11253,20 @@ menu
 		-- BUBB EDIT SPELL END
 
 		action "buttonArray:OnLButtonPressed(5)"
-		actionAlt "buttonArray:OnRButtonPressed(5)"
+
+		--actionAlt "buttonArray:OnRButtonPressed(5)"
+		actionAlt 	"
+						if isTooltipQuickSpell(actionBarTooltip[5])
+						   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU')
+						then
+							launchSpellMenu(5, false)
+						else
+							buttonArray:OnRButtonPressed(5)
+						end
+					"
+
+		-- BUBB EDIT SPELL END
+
 	}
 	button
 	{
@@ -11199,15 +11283,12 @@ menu
 
 		--action "buttonArray:OnLButtonPressed(6)"
 		action	"
-					if not worldScreen:CheckIfPaused() then
-
-						worldScreen:TogglePauseGame(true)
-					end
-
-					buttonArray:OnLButtonPressed(6)
-
-					if not Infinity_IsMenuOnStack('BUBB_SPELL_MENU') then
-						Infinity_PushMenu('BUBB_SPELL_MENU')
+					if isFirstTooltipTalk()
+					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU')
+					then
+						launchSpellMenu(6, true)
+					else
+						buttonArray:OnLButtonPressed(6)
 					end
 				"
 
@@ -11303,15 +11384,12 @@ menu
 
 		--action "buttonArray:OnLButtonPressed(11)"
 		action "
-					if not worldScreen:CheckIfPaused() then
-
-						worldScreen:TogglePauseGame(true)
-					end
-
-					buttonArray:OnLButtonPressed(11)
-
-					if not Infinity_IsMenuOnStack('BUBB_SPELL_MENU') then
-						Infinity_PushMenu('BUBB_SPELL_MENU')
+					if isFirstTooltipTalk()
+					   and not Infinity_IsMenuOnStack('BUBB_SPELL_MENU')
+					then
+						launchSpellMenu(11, true)
+					else
+						buttonArray:OnLButtonPressed(11)
 					end
 				"
 		
@@ -14919,7 +14997,14 @@ menu
 			label
 			{
 				area 4 0 -1 -1
-				text lua "Infinity_FetchString(priestSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name)"
+				
+				-- BUBB EDIT SPELL START
+
+				--text lua "Infinity_FetchString(priestSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name)"
+				text lua "replaceSpellUUIDs(Infinity_FetchString(priestSpells[chargen.currentSpellLevelChoice][chargen.choose_spell[rowNumber].key].name))"
+
+				-- BUBB EDIT SPELL END
+				
 				text style "normal"
 
 				glow lua "chargen.choose_spell[rowNumber].enabled"
