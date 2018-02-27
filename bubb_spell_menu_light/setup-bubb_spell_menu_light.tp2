@@ -1,6 +1,6 @@
 BACKUP ~bubb_spell_menu_light/backup~
 AUTHOR ~Bubb~
-VERSION 1.2
+VERSION 1.3
 AUTO_TRA ~bubb_spell_menu_light/%s~
 
 BEGIN ~Bubb's Spell Menu Light~
