@@ -11324,9 +11324,8 @@ menu
 
 	button
 	{
-		area 68 1 52 52 
+		area 68 1 52 52
 		enabled "getSlotEnabled(0) and not getIconEnabledForSlot(0)"
-		align center center
 		bam lua 'getBamForSlot(0)'
 		frame lua 'getFrameForSlot(0)'
 		tooltip lua 'getTooltipForSlot(0)'
@@ -11334,9 +11333,8 @@ menu
 	}
 	button
 	{
-		area 68 1 52 52 
+		area 68 1 52 52
 		enabled "getSlotEnabled(0) and getIconEnabledForSlot(0)"
-		align center center
 		bam lua 'getBamForSlot(0)'
 		frame lua 'getFrameForSlot(0)'
 		icon lua "getIconForSlot(0)"
@@ -11346,9 +11344,8 @@ menu
 
 	button
 	{
-		area 122 1 52 52 
+		area 122 1 52 52
 		enabled "getSlotEnabled(1) and not getIconEnabledForSlot(1)"
-		align center center
 		bam lua 'getBamForSlot(1)'
 		frame lua 'getFrameForSlot(1)'
 		tooltip lua 'getTooltipForSlot(1)'
@@ -11356,9 +11353,8 @@ menu
 	}
 	button
 	{
-		area 122 1 52 52 
+		area 122 1 52 52
 		enabled "getSlotEnabled(1) and getIconEnabledForSlot(1)"
-		align center center
 		bam lua 'getBamForSlot(1)'
 		frame lua 'getFrameForSlot(1)'
 		icon lua "getIconForSlot(1)"
@@ -11368,9 +11364,8 @@ menu
 
 	button
 	{
-		area 177 1 52 52 
+		area 177 1 52 52
 		enabled "getSlotEnabled(2) and not getIconEnabledForSlot(2)"
-		align center center
 		bam lua 'getBamForSlot(2)'
 		frame lua 'getFrameForSlot(2)'
 		tooltip lua 'getTooltipForSlot(2)'
@@ -11378,9 +11373,8 @@ menu
 	}
 	button
 	{
-		area 177 1 52 52 
+		area 177 1 52 52
 		enabled "getSlotEnabled(2) and getIconEnabledForSlot(2)"
-		align center center
 		bam lua 'getBamForSlot(2)'
 		frame lua 'getFrameForSlot(2)'
 		icon lua "getIconForSlot(2)"
@@ -11390,9 +11384,8 @@ menu
 
 	button
 	{
-		area 231 1 52 52 
+		area 231 1 52 52
 		enabled "getSlotEnabled(3) and not getIconEnabledForSlot(3)"
-		align center center
 		bam lua 'getBamForSlot(3)'
 		frame lua 'getFrameForSlot(3)'
 		tooltip lua 'getTooltipForSlot(3)'
@@ -11400,9 +11393,8 @@ menu
 	}
 	button
 	{
-		area 231 1 52 52 
+		area 231 1 52 52
 		enabled "getSlotEnabled(3) and getIconEnabledForSlot(3)"
-		align center center
 		bam lua 'getBamForSlot(3)'
 		frame lua 'getFrameForSlot(3)'
 		icon lua "getIconForSlot(3)"
@@ -11412,9 +11404,8 @@ menu
 
 	button
 	{
-		area 299 1 52 52 
+		area 299 1 52 52
 		enabled "getSlotEnabled(4) and not getIconEnabledForSlot(4)"
-		align center center
 		bam lua 'getBamForSlot(4)'
 		frame lua 'getFrameForSlot(4)'
 		tooltip lua 'getTooltipForSlot(4)'
@@ -11422,9 +11413,8 @@ menu
 	}
 	button
 	{
-		area 299 1 52 52 
+		area 299 1 52 52
 		enabled "getSlotEnabled(4) and getIconEnabledForSlot(4)"
-		align center center
 		bam lua 'getBamForSlot(4)'
 		frame lua 'getFrameForSlot(4)'
 		icon lua "getIconForSlot(4)"
@@ -11434,9 +11424,8 @@ menu
 
 	button
 	{
-		area 353 1 52 52 
+		area 353 1 52 52
 		enabled "getSlotEnabled(5) and not getIconEnabledForSlot(5)"
-		align center center
 		bam lua 'getBamForSlot(5)'
 		frame lua 'getFrameForSlot(5)'
 		tooltip lua 'getTooltipForSlot(5)'
@@ -11444,9 +11433,8 @@ menu
 	}
 	button
 	{
-		area 353 1 52 52 
+		area 353 1 52 52
 		enabled "getSlotEnabled(5) and getIconEnabledForSlot(5)"
-		align center center
 		bam lua 'getBamForSlot(5)'
 		frame lua 'getFrameForSlot(5)'
 		icon lua "getIconForSlot(5)"
@@ -11456,9 +11444,8 @@ menu
 
 	button
 	{
-		area 407 1 52 52 
+		area 407 1 52 52
 		enabled "getSlotEnabled(6) and not getIconEnabledForSlot(6)"
-		align center center
 		bam lua 'getBamForSlot(6)'
 		frame lua 'getFrameForSlot(6)'
 		tooltip lua 'getTooltipForSlot(6)'
@@ -11466,9 +11453,8 @@ menu
 	}
 	button
 	{
-		area 407 1 52 52 
+		area 407 1 52 52
 		enabled "getSlotEnabled(6) and getIconEnabledForSlot(6)"
-		align center center
 		bam lua 'getBamForSlot(6)'
 		frame lua 'getFrameForSlot(6)'
 		icon lua "getIconForSlot(6)"
@@ -11478,9 +11464,8 @@ menu
 
 	button
 	{
-		area 461 1 52 52 
+		area 461 1 52 52
 		enabled "getSlotEnabled(7) and not getIconEnabledForSlot(7)"
-		align center center
 		bam lua 'getBamForSlot(7)'
 		frame lua 'getFrameForSlot(7)'
 		tooltip lua 'getTooltipForSlot(7)'
@@ -11488,9 +11473,8 @@ menu
 	}
 	button
 	{
-		area 461 1 52 52 
+		area 461 1 52 52
 		enabled "getSlotEnabled(7) and getIconEnabledForSlot(7)"
-		align center center
 		bam lua 'getBamForSlot(7)'
 		frame lua 'getFrameForSlot(7)'
 		icon lua "getIconForSlot(7)"
@@ -11500,9 +11484,8 @@ menu
 
 	button
 	{
-		area 528 1 52 52 
+		area 528 1 52 52
 		enabled "getSlotEnabled(8) and not getIconEnabledForSlot(8)"
-		align center center
 		bam lua 'getBamForSlot(8)'
 		frame lua 'getFrameForSlot(8)'
 		tooltip lua 'getTooltipForSlot(8)'
@@ -11510,9 +11493,8 @@ menu
 	}
 	button
 	{
-		area 528 1 52 52 
+		area 528 1 52 52
 		enabled "getSlotEnabled(8) and getIconEnabledForSlot(8)"
-		align center center
 		bam lua 'getBamForSlot(8)'
 		frame lua 'getFrameForSlot(8)'
 		icon lua "getIconForSlot(8)"
@@ -11522,9 +11504,8 @@ menu
 
 	button
 	{
-		area 582 1 52 52 
+		area 582 1 52 52
 		enabled "getSlotEnabled(9) and not getIconEnabledForSlot(9)"
-		align center center
 		bam lua 'getBamForSlot(9)'
 		frame lua 'getFrameForSlot(9)'
 		tooltip lua 'getTooltipForSlot(9)'
@@ -11532,9 +11513,8 @@ menu
 	}
 	button
 	{
-		area 582 1 52 52 
+		area 582 1 52 52
 		enabled "getSlotEnabled(9) and getIconEnabledForSlot(9)"
-		align center center
 		bam lua 'getBamForSlot(9)'
 		frame lua 'getFrameForSlot(9)'
 		icon lua "getIconForSlot(9)"
@@ -11544,9 +11524,8 @@ menu
 
 	button
 	{
-		area 636 1 52 52 
+		area 636 1 52 52
 		enabled "getSlotEnabled(10) and not getIconEnabledForSlot(10)"
-		align center center
 		bam lua 'getBamForSlot(10)'
 		frame lua 'getFrameForSlot(10)'
 		tooltip lua 'getTooltipForSlot(10)'
@@ -11554,9 +11533,8 @@ menu
 	}
 	button
 	{
-		area 636 1 52 52 
+		area 636 1 52 52
 		enabled "getSlotEnabled(10) and getIconEnabledForSlot(10)"
-		align center center
 		bam lua 'getBamForSlot(10)'
 		frame lua 'getFrameForSlot(10)'
 		icon lua "getIconForSlot(10)"
@@ -11566,9 +11544,8 @@ menu
 
 	button
 	{
-		area 689 1 52 52 
+		area 689 1 52 52
 		enabled "getSlotEnabled(11) and not getIconEnabledForSlot(11)"
-		align center center
 		bam lua 'getBamForSlot(11)'
 		frame lua 'getFrameForSlot(11)'
 		tooltip lua 'getTooltipForSlot(11)'
@@ -11576,9 +11553,8 @@ menu
 	}
 	button
 	{
-		area 689 1 52 52 
+		area 689 1 52 52
 		enabled "getSlotEnabled(11) and getIconEnabledForSlot(11)"
-		align center center
 		bam lua 'getBamForSlot(11)'
 		frame lua 'getFrameForSlot(11)'
 		icon lua "getIconForSlot(11)"
