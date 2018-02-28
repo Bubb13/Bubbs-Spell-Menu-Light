@@ -345,7 +345,34 @@ function selectSpellWithUUID(uuid)
 	end
 end
 
+function getSpellCastableCountFromResref(resref)
+	for key, character in pairs(characters) do
+		for spellLevelIndex = 1, 9, 1 do
+			local spellLevel = character.mageSpells[spellLevelIndex]
+			for spellIndex = 1, #spellLevel, 1 do
+				local spell = spellLevel[spellIndex]
+				if spell.resref == resref then
+					return spell.castableCount
+				end
+			end
+		end
+		for spellLevelIndex = 1, 7, 1 do
+			local spellLevel = character.priestSpells[spellLevelIndex]
+			for spellIndex = 1, #spellLevel, 1 do
+				local spell = spellLevel[spellIndex]
+				if spell.resref == resref then
+					return spell.castableCount
+				end
+			end
+		end
+		return nil
+	end
+end
+
 function fillSpellListInfo()
+
+	characters = {}
+	Infinity_UpdateLuaStats()
 
 	spellListInfo = {}
 	filteredSpellListInfo = {}
@@ -363,6 +390,7 @@ function fillSpellListInfo()
 				if isTooltipSpell(tooltipValue) then
 
 					spellUUID = getSpellUUID(tooltipValue)
+					spellResref = spellInfo[spellUUID].resref
 					spellName = spellInfo[spellUUID].name
 					spellIcon = spellInfo[spellUUID].spellIcon
 
@@ -370,6 +398,7 @@ function fillSpellListInfo()
 					toInsert.spellUUID = spellUUID
 					toInsert.spellName = spellName
 					toInsert.spellIcon = string.sub(spellIcon, 1, #spellIcon - 1)..'B'
+					toInsert.spellCastableCount = getSpellCastableCountFromResref(spellResref)
 
 					table.insert(spellListInfo, toInsert)
 				end
@@ -462,6 +491,19 @@ function getIconForSlot(slot)
 	else
 		return nil
 	end
+end
+
+function getCountForSlot(slot)
+
+	info = nil
+
+	if slotEndsAreArrows() then
+		info = filteredSpellListInfo[filteredSpellListInfoOffset + slot]
+	else
+		info = filteredSpellListInfo[filteredSpellListInfoOffset + slot + 1]
+	end
+
+	if info ~= nil then return info.spellCastableCount else return nil end
 end
 
 function getTooltipForSlot(slot)
@@ -11416,6 +11458,7 @@ menu
 		bam lua 'getBamForSlot(0)'
 		frame lua 'getFrameForSlot(0)'
 		icon lua "getIconForSlot(0)"
+		count lua "getCountForSlot(0)"
 		tooltip lua 'getTooltipForSlot(0)'
 		action 'doActionForSlot(0)'
 	}
@@ -11436,6 +11479,7 @@ menu
 		bam lua 'getBamForSlot(1)'
 		frame lua 'getFrameForSlot(1)'
 		icon lua "getIconForSlot(1)"
+		count lua "getCountForSlot(1)"
 		tooltip lua 'getTooltipForSlot(1)'
 		action 'doActionForSlot(1)'
 	}
@@ -11456,6 +11500,7 @@ menu
 		bam lua 'getBamForSlot(2)'
 		frame lua 'getFrameForSlot(2)'
 		icon lua "getIconForSlot(2)"
+		count lua "getCountForSlot(2)"
 		tooltip lua 'getTooltipForSlot(2)'
 		action 'doActionForSlot(2)'
 	}
@@ -11476,6 +11521,7 @@ menu
 		bam lua 'getBamForSlot(3)'
 		frame lua 'getFrameForSlot(3)'
 		icon lua "getIconForSlot(3)"
+		count lua "getCountForSlot(3)"
 		tooltip lua 'getTooltipForSlot(3)'
 		action 'doActionForSlot(3)'
 	}
@@ -11496,6 +11542,7 @@ menu
 		bam lua 'getBamForSlot(4)'
 		frame lua 'getFrameForSlot(4)'
 		icon lua "getIconForSlot(4)"
+		count lua "getCountForSlot(4)"
 		tooltip lua 'getTooltipForSlot(4)'
 		action 'doActionForSlot(4)'
 	}
@@ -11516,6 +11563,7 @@ menu
 		bam lua 'getBamForSlot(5)'
 		frame lua 'getFrameForSlot(5)'
 		icon lua "getIconForSlot(5)"
+		count lua "getCountForSlot(5)"
 		tooltip lua 'getTooltipForSlot(5)'
 		action 'doActionForSlot(5)'
 	}
@@ -11536,6 +11584,7 @@ menu
 		bam lua 'getBamForSlot(6)'
 		frame lua 'getFrameForSlot(6)'
 		icon lua "getIconForSlot(6)"
+		count lua "getCountForSlot(6)"
 		tooltip lua 'getTooltipForSlot(6)'
 		action 'doActionForSlot(6)'
 	}
@@ -11556,6 +11605,7 @@ menu
 		bam lua 'getBamForSlot(7)'
 		frame lua 'getFrameForSlot(7)'
 		icon lua "getIconForSlot(7)"
+		count lua "getCountForSlot(7)"
 		tooltip lua 'getTooltipForSlot(7)'
 		action 'doActionForSlot(7)'
 	}
@@ -11576,6 +11626,7 @@ menu
 		bam lua 'getBamForSlot(8)'
 		frame lua 'getFrameForSlot(8)'
 		icon lua "getIconForSlot(8)"
+		count lua "getCountForSlot(8)"
 		tooltip lua 'getTooltipForSlot(8)'
 		action 'doActionForSlot(8)'
 	}
@@ -11596,6 +11647,7 @@ menu
 		bam lua 'getBamForSlot(9)'
 		frame lua 'getFrameForSlot(9)'
 		icon lua "getIconForSlot(9)"
+		count lua "getCountForSlot(9)"
 		tooltip lua 'getTooltipForSlot(9)'
 		action 'doActionForSlot(9)'
 	}
@@ -11616,6 +11668,7 @@ menu
 		bam lua 'getBamForSlot(10)'
 		frame lua 'getFrameForSlot(10)'
 		icon lua "getIconForSlot(10)"
+		count lua "getCountForSlot(10)"
 		tooltip lua 'getTooltipForSlot(10)'
 		action 'doActionForSlot(10)'
 	}
@@ -11636,6 +11689,7 @@ menu
 		bam lua 'getBamForSlot(11)'
 		frame lua 'getFrameForSlot(11)'
 		icon lua "getIconForSlot(11)"
+		count lua "getCountForSlot(11)"
 		tooltip lua 'getTooltipForSlot(11)'
 		action 'doActionForSlot(11)'
 	}

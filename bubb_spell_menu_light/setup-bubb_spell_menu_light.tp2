@@ -220,6 +220,7 @@ BEGIN ~Bubb's Spell Menu Light~
 					APPEND ~BGEE.LUA~ ~%TAB%['%hex_uuid%'] =~
 					APPEND ~BGEE.LUA~ ~%TAB%{~
 					
+					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['name'] = '%unidentified_name_escaped%',~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
 					
@@ -254,6 +255,7 @@ BEGIN ~Bubb's Spell Menu Light~
 					APPEND ~BGEE.LUA~ ~%TAB%['%hex_uuid%'] =~
 					APPEND ~BGEE.LUA~ ~%TAB%{~
 					
+					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['resref'] = '%SOURCE_RES%',~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['name'] = '%original_value_escaped%',~
 					APPEND ~BGEE.LUA~ ~%TAB%%TAB%['spellIcon'] = '%spell_icon%',~
 	
