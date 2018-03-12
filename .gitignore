@@ -1,7 +1,7 @@
 *.*
-!bubb_spell_menu_light/*.*
-!bubb_spell_menu_light/work/*.*
-bubb_spell_menu_light/work/to_patch.MENU
-bubb_spell_menu_light/work/out.MENU
 !setup-bubb_spell_menu_light.exe
-bubb_spell_menu_light/work/failed.mrk
+!bubb_spell_menu_light/*.*
+!bubb_spell_menu_light/copy/*.*
+!bubb_spell_menu_light/work/*.*
+bubb_spell_menu_light/work/out.MENU
+bubb_spell_menu_light/work/to_patch.MENU
