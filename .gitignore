@@ -1,6 +1,6 @@
 *.*
-!bubb_spell_menu_extended/*.*
-!bubb_spell_menu_extended/work/*.*
-bubb_spell_menu_extended/work/to_patch.MENU
-bubb_spell_menu_extended/work/out.MENU
-!setup-bubb_spell_menu_extended.exe
+!bubb_spell_menu_light/*.*
+!bubb_spell_menu_light/work/*.*
+bubb_spell_menu_light/work/to_patch.MENU
+bubb_spell_menu_light/work/out.MENU
+!setup-bubb_spell_menu_light.exe
