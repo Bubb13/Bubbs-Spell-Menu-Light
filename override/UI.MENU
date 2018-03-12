@@ -609,7 +609,6 @@ pausedOnOpen = false
 
 oldSpellSearchEdit = ''
 spellSearchEdit = ''
-bubbSpellMenuAlreadyAdjusted = false
 
 function launchSpellMenu(slot, leftClick)
 
@@ -639,20 +638,11 @@ menu
 	ignoreEsc
 
 	onOpen 	"
-				if not bubbSpellMenuAlreadyAdjusted then
+				local x, y, bubbSpellMenuBackgroundWidth, h = Infinity_GetArea('bubbSpellMenuSearchBackground')
+				bubbSpellMenuXPos = Infinity_GetScreenSize() / 2 - bubbSpellMenuBackgroundWidth / 2
 
-					local x, y, bubbSpellMenuBackgroundWidth, h = Infinity_GetArea('bubbSpellMenuSearchBackground')
-					bubbSpellMenuXPos = Infinity_GetScreenSize() / 2 - bubbSpellMenuBackgroundWidth / 2
-
-					adjustItemGroup(
-					{
-						'bubbSpellMenuSearchBackground',
-						'bubbSpellMenuSearch',
-
-					}, bubbSpellMenuXPos, 0, 0, 0)
-
-					bubbSpellMenuAlreadyAdjusted = true
-				end
+				Infinity_SetArea('bubbSpellMenuSearchBackground', bubbSpellMenuXPos, nil, nil, nil)
+				Infinity_SetArea('bubbSpellMenuSearch', bubbSpellMenuXPos, nil, nil, nil)
 
 				oldSpellSearchEdit = ''
 				spellSearchEdit = ''
